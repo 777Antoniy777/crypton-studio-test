@@ -36,14 +36,14 @@ task("getAllDonors", "Get all donors")
     setOfDonors.forEach((elem, i) => console.log(`Donor #${i + 1} is ${elem}`));
   });
 
-task("getCurrentDonation", "Get all donations of current donor")
+task("getAllDonationsOfCurrentDonor", "Get all donations of current donor")
   .addParam("donor", "The address of current donor")
   .setAction(async (taskArgs) => {
     const { donor } = taskArgs;
     const Donation = await ethers.getContractFactory("Donation");
     const hardhatDonation = await Donation.deploy();
 
-    const value = await hardhatDonation.getCurrentDonation(donor);
+    const value = await hardhatDonation.getAllDonationsOfCurrentDonor(donor);
     // await tx.wait();
 
     console.log(`All donations from ${donor} is ${value}`);

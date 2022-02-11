@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require('solidity-coverage');
 require("dotenv").config();
 
 const { ALCHEMY_API_KEY, RINKEBY_PRIVATE_KEY } = process.env;

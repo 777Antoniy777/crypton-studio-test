@@ -35,10 +35,11 @@ contract Donation {
                     donors.push(msg.sender);
                 }
             }
-        } else {
-            donors.push(msg.sender);
+
+            return;
         }
-        
+
+        donors.push(msg.sender);
     }
 
     // В контракте имеется функция вывода любой суммы на любой адрес,
@@ -60,7 +61,7 @@ contract Donation {
 
     // В контракте имеется view функция позволяющая получить общую сумму всех пожертвований
     // для определённого адреса
-    function getCurrentDonation(address currentDonor) external view returns (uint256) {
+    function getAllDonationsOfCurrentDonor(address currentDonor) external view returns (uint256) {
         // test
         console.log('balance TEST:', currentDonor.balance);
         console.log('currentDonor:', currentDonor);
