@@ -4,7 +4,11 @@ require("dotenv").config();
 
 const { ALCHEMY_API_KEY, RINKEBY_PRIVATE_KEY } = process.env;
 
-require("./tasks/insertDonation"); // задачи
+// задачи
+require("./tasks/insert-donation");
+require("./tasks/send-donation");
+require("./tasks/get-all-donors");
+require("./tasks/get-all-donations-of-current-donor");
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
