@@ -2,7 +2,10 @@
   "name": "crypton-studio",
   "version": "1.0.0",
   "description": "crypton-studio project",
-  "scripts": {},
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test"
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {

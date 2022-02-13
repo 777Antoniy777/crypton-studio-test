@@ -4,36 +4,33 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 contract Donation {
-    // для тестового задания
     address public owner;
     address[] public donors;
-    mapping(address => uint256) donations;
-    mapping(address => uint256) allDonations;
+    mapping(address => uint256) public donations;
+    mapping(address => uint256) public allDonations;
 
     constructor() {
         owner = msg.sender;
     }
 
-    // event Received(address, uint);
-    // receive() external payable {
-    //     emit Received(msg.sender, msg.value);
-    //     console.log("msg.sender, msg.value", msg.sender, msg.value);
-    // }
-
     // для тестового задания
     // В контракте имеется функция вноса любой суммы пожертвования в нативной валюте блокчейна
     function insertDonation() external payable {
-        console.log("msg.sender, msg.value: ", msg.sender, msg.value);
-        require(msg.sender != owner, "You are not owner");
+        require(msg.sender != owner, "You are owner");
 
+        bool isUnique = true;
         donations[owner] = donations[owner] + msg.value;
         allDonations[msg.sender] = allDonations[msg.sender] + msg.value;
 
         if (donors.length != 0) {
             for (uint i = 0; i < donors.length; i++) {
-                if (donors[i] != msg.sender) {
-                    donors.push(msg.sender);
+                if (donors[i] == msg.sender) {
+                    isUnique = false;
                 }
+            }
+
+            if (isUnique) {
+                donors.push(msg.sender);
             }
 
             return;
@@ -62,11 +59,6 @@ contract Donation {
     // В контракте имеется view функция позволяющая получить общую сумму всех пожертвований
     // для определённого адреса
     function getAllDonationsOfCurrentDonor(address currentDonor) external view returns (uint256) {
-        // test
-        console.log('balance TEST:', currentDonor.balance);
-        console.log('currentDonor:', currentDonor);
-        console.log('balances[currentDonor]:', allDonations[currentDonor]);
-
         return allDonations[currentDonor];
     }
 
