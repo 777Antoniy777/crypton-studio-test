@@ -3,6 +3,5 @@ task("getAllDonors", "Get all donors")
     const Donation = await ethers.getContractFactory("Donation");
     const hardhatDonation = await Donation.deploy();
 
-    const tx = await hardhatDonation.getAllDonors();
-    await tx.wait();
+    await hardhatDonation.getAllDonors();
   });
