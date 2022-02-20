@@ -139,14 +139,11 @@ describe("Donation contract", () => {
 
   describe("getAllDonors", () => {
     it("Should return all donors that inserted donations", async () => {
-      let index = 0;
       addrs.length = 5;
 
       // add unique address on every iteration
       for (let value of addrs) {
         await insertDonationFromAnotherAddress(value);
-
-        index++;
       }
 
       // add repeated addresses for testing function
