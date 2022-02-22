@@ -33,7 +33,7 @@ describe("Donation contract", () => {
     it("Should insert donation at owner address from any address", async () => {
       const value = await insertDonationFromAnotherAddress();
 
-      const ownerBalance = await hardhatDonation.balanceOf(owner.address);
+      const ownerBalance = await hardhatDonation.balanceOf();
       expect(ownerBalance).to.equal(value);
     });
 
@@ -50,44 +50,32 @@ describe("Donation contract", () => {
       const currentAddress = await hardhatDonation.donors([0]);
       expect(currentAddress).to.equal(addr1.address);
     });
-
-    it("Should reject donation if sender is owner", async () => {
-      const value = 10;
-      await expect(
-        hardhatDonation.insertDonation({ value })
-      ).to.be.revertedWith("You are owner");
-
-      const ownerBalance = await hardhatDonation.balanceOf(owner.address);
-      expect(ownerBalance).to.equal(0);
-    });
   });
 
   describe("sendDonation", () => {
-    const checkOwnerBalance = async (receivedValue) => {
-      const ownerBalance = await hardhatDonation.balanceOf(owner.address);
-      expect(ownerBalance).to.equal(receivedValue);
+    const checkTotalBalance = async (receivedValue) => {
+      const totalBalance = await hardhatDonation.balanceOf();
+      expect(totalBalance).to.equal(receivedValue);
     };
 
     it("Should owner to send donation to any another address", async () => {
       // insert donation from addr1
       const receivedValue = await insertDonationFromAnotherAddress();
-      await checkOwnerBalance(receivedValue);
+      await checkTotalBalance(receivedValue);
 
       // send donation from owner
       const sentValue = 5;
       await hardhatDonation.sendDonation(addr2.address, sentValue);
 
       // check balances
-      const ownerBalance = await hardhatDonation.balanceOf(owner.address);
-      const balanceWithSentDonation = await hardhatDonation.balanceOf(addr2.address);
-      expect(ownerBalance).to.equal(receivedValue - sentValue);
-      expect(balanceWithSentDonation).to.equal(sentValue);
+      const totalBalance = await hardhatDonation.balanceOf();
+      expect(totalBalance).to.equal(receivedValue - sentValue);
     });
 
     it("Should reject sending donation if sender is not owner", async () => {
       // insert donation from addr1
       const receivedValue = await insertDonationFromAnotherAddress();
-      await checkOwnerBalance(receivedValue);
+      await checkTotalBalance(receivedValue);
 
       // send donation from another address
       const sentValue = 5;
@@ -96,44 +84,24 @@ describe("Donation contract", () => {
       ).to.be.revertedWith("You are not owner");
 
       // check balances
-      const ownerBalance = await hardhatDonation.balanceOf(owner.address);
-      const balanceWithSentDonation = await hardhatDonation.balanceOf(addr2.address);
-      expect(ownerBalance).to.equal(receivedValue);
-      expect(balanceWithSentDonation).to.equal(0);
+      const totalBalance = await hardhatDonation.balanceOf();
+      expect(totalBalance).to.equal(receivedValue);
     });
 
     it("Should reject sending if balance less than needle", async () => {
       // insert donation from addr1
       const receivedValue = await insertDonationFromAnotherAddress();
-      await checkOwnerBalance(receivedValue);
+      await checkTotalBalance(receivedValue);
 
       // send donation from another address
       const sentValue = 15;
       await expect(
         hardhatDonation.sendDonation(addr2.address, sentValue)
-      ).to.be.revertedWith("Not enough tokens");
+      ).to.be.revertedWith("Not enough amount of ether");
 
       // check balances
-      const ownerBalance = await hardhatDonation.balanceOf(owner.address);
-      const balanceWithSentDonation = await hardhatDonation.balanceOf(addr2.address);
-      expect(ownerBalance).to.equal(receivedValue);
-      expect(balanceWithSentDonation).to.equal(0);
-    });
-
-    it("Should reject sending if sending donation itself", async () => {
-      // insert donation from addr1
-      const receivedValue = await insertDonationFromAnotherAddress();
-      await checkOwnerBalance(receivedValue);
-
-      // send donation itself
-      const sentValue = 8;
-      await expect(
-        hardhatDonation.sendDonation(owner.address, sentValue)
-      ).to.be.revertedWith("You can't send money to yourself!");
-
-      // check balances
-      const ownerBalance = await hardhatDonation.balanceOf(owner.address);
-      expect(ownerBalance).to.equal(receivedValue);
+      const totalBalance = await hardhatDonation.balanceOf();
+      expect(totalBalance).to.equal(receivedValue);
     });
   });
 
@@ -152,15 +120,6 @@ describe("Donation contract", () => {
 
       const donors = await hardhatDonation.getAllDonors();
       expect(donors.length).to.equal(addrs.length);
-    });
-
-    it("Should not add donor if any exception fired in insertDonation function", async () => {
-      await expect(
-        insertDonationFromAnotherAddress(owner)
-      ).to.be.revertedWith("You are owner");
-
-      const donors = await hardhatDonation.getAllDonors();
-      expect(donors.length).to.equal(0);
     });
   });
 

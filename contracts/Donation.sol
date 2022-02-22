@@ -16,13 +16,17 @@ contract Donation {
         _;
     }
 
+    // events
+    event ValueReceived(address from, uint amount);
+    event ValueSent(address from, address to, uint amount);
+
     receive() external payable {
         insertDonation();
     }
 
-    fallback() external payable {
-        insertDonation();
-    }
+//    fallback() external payable {
+//        insertDonation();
+//    }
 
     // В контракте имеется функция вноса любой суммы пожертвования в нативной валюте блокчейна
     function insertDonation() public payable {
@@ -30,8 +34,10 @@ contract Donation {
             donors.push(msg.sender);
         }
 
-         donations = donations + msg.value;
-         allDonations[msg.sender] = allDonations[msg.sender] + msg.value;
+        donations = donations + msg.value;
+        allDonations[msg.sender] = allDonations[msg.sender] + msg.value;
+
+        emit ValueReceived(msg.sender, msg.value);
     }
 
     // В контракте имеется функция вывода любой суммы на любой адрес,
@@ -41,6 +47,8 @@ contract Donation {
 
         donations = donations - amount;
         recipient.transfer(amount);
+
+        emit ValueSent(msg.sender, recipient, amount);
     }
 
     // В контракте имеется view функция, которая возвращает список всех пользователей когда либо вносивших пожертвование.

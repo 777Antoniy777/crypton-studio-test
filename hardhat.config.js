@@ -3,7 +3,7 @@ require("@nomiclabs/hardhat-etherscan");
 require('solidity-coverage');
 require("dotenv").config();
 
-const { ALCHEMY_API_KEY, PRIVATE_KEY, ETHERSCAN_KEY } = process.env;
+const { PRIVATE_KEY, ALCHEMY_API_KEY, ETHERSCAN_API_KEY } = process.env;
 
 // задачи
 require("./tasks/insert-donation");
@@ -23,6 +23,6 @@ module.exports = {
     }
   },
   etherscan: {
-    apiKey: ETHERSCAN_KEY,
+    apiKey: ETHERSCAN_API_KEY,
   }
 };
