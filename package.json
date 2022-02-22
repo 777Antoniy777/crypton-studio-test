@@ -9,12 +9,14 @@
     "node": "npx hardhat node",
     "deploy": "npx hardhat run scripts/deploy.js --network rinkeby",
     "coverage": "npx hardhat coverage",
+    "verify": "npx hardhat verify --network rinkeby",
     "test": "npx hardhat test"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.4",
+    "@nomiclabs/hardhat-etherscan": "^3.0.1",
     "@nomiclabs/hardhat-waffle": "^2.0.2",
     "chai": "^4.3.6",
     "ethereum-waffle": "^3.4.0",

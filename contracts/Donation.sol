@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
-
 contract Donation {
     address public owner;
     address[] public donors;
@@ -13,7 +11,16 @@ contract Donation {
         owner = msg.sender;
     }
 
+    modifier onlyOwner() {
+        require(msg.sender == owner, "You are not owner");
+        _;
+    }
+
     receive() external payable {
+        insertDonation();
+    }
+
+    fallback() external payable {
         insertDonation();
     }
 
@@ -23,15 +30,13 @@ contract Donation {
             donors.push(msg.sender);
         }
 
-         // NOTE: вроде если receive не отработает, то должна быть ф-ция fallback
          donations = donations + msg.value;
          allDonations[msg.sender] = allDonations[msg.sender] + msg.value;
     }
 
     // В контракте имеется функция вывода любой суммы на любой адрес,
     // при этом функция может быть вызвана только владельцем контракта
-    function sendDonation(address payable recipient, uint amount) external {
-        require(msg.sender == owner, "You are not owner");
+    function sendDonation(address payable recipient, uint amount) external onlyOwner {
         require(donations >= amount, "Not enough amount of ether");
 
         donations = donations - amount;

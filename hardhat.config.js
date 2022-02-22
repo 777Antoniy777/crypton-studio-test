@@ -1,8 +1,9 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-etherscan");
 require('solidity-coverage');
 require("dotenv").config();
 
-const { ALCHEMY_API_KEY, RINKEBY_PRIVATE_KEY } = process.env;
+const { ALCHEMY_API_KEY, PRIVATE_KEY, ETHERSCAN_KEY } = process.env;
 
 // задачи
 require("./tasks/insert-donation");
@@ -18,7 +19,10 @@ module.exports = {
   networks: {
     rinkeby: {
       url: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-      accounts: [`0x${RINKEBY_PRIVATE_KEY}`]
+      accounts: [PRIVATE_KEY],
     }
+  },
+  etherscan: {
+    apiKey: ETHERSCAN_KEY,
   }
 };
