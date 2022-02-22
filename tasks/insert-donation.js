@@ -16,5 +16,7 @@ task("insertDonation", "Insert any value donation")
     const parsedAddress = JSON.parse(addressJson);
     const hardhatDonation = await ethers.getContractAt("Donation", parsedAddress.address);
 
-    await hardhatDonation.insertDonation(amount);
+    await hardhatDonation.insertDonation({
+      value: ethers.utils.parseEther(amount),
+    });
   });

@@ -6,38 +6,36 @@ import "hardhat/console.sol";
 contract Donation {
     address public owner;
     address[] public donors;
-    mapping(address => uint256) public donations;
-    mapping(address => uint256) public allDonations;
+    uint public donations;
+    mapping(address => uint) public allDonations;
 
     constructor() {
         owner = msg.sender;
     }
 
-    // для тестового задания
-    // В контракте имеется функция вноса любой суммы пожертвования в нативной валюте блокчейна
-    function insertDonation(uint256 amount) public payable {
-        // require(msg.sender != owner, "You are owner");
-        console.log('param: ', msg.sender, msg.value);
+    receive() external payable {
+        insertDonation();
+    }
 
-        if (allDonations[msg.sender] == 0) {
+    // В контракте имеется функция вноса любой суммы пожертвования в нативной валюте блокчейна
+    function insertDonation() public payable {
+        if (allDonations[msg.sender] == 0 && msg.value != 0) {
             donors.push(msg.sender);
         }
 
-        // donations[owner] = donations[owner] + msg.value;
-        // allDonations[msg.sender] = allDonations[msg.sender] + msg.value;
-        donations[owner] = donations[owner] + amount;
-        allDonations[msg.sender] = allDonations[msg.sender] + amount;
+         // NOTE: вроде если receive не отработает, то должна быть ф-ция fallback
+         donations = donations + msg.value;
+         allDonations[msg.sender] = allDonations[msg.sender] + msg.value;
     }
 
     // В контракте имеется функция вывода любой суммы на любой адрес,
     // при этом функция может быть вызвана только владельцем контракта
-    function sendDonation(address recipient, uint256 amount) public {
+    function sendDonation(address payable recipient, uint amount) external {
         require(msg.sender == owner, "You are not owner");
-        require(donations[msg.sender] >= amount, "Not enough tokens");
-        require(msg.sender != recipient, "You can't send money to yourself!");
+        require(donations >= amount, "Not enough amount of ether");
 
-        donations[msg.sender] = donations[msg.sender] - amount;
-        donations[recipient] = donations[recipient] + amount;
+        donations = donations - amount;
+        recipient.transfer(amount);
     }
 
     // В контракте имеется view функция, которая возвращает список всех пользователей когда либо вносивших пожертвование.
@@ -48,11 +46,11 @@ contract Donation {
 
     // В контракте имеется view функция позволяющая получить общую сумму всех пожертвований
     // для определённого адреса
-    function getAllDonationsOfCurrentDonor(address currentDonor) public view returns (uint256) {
+    function getAllDonationsOfCurrentDonor(address currentDonor) public view returns (uint) {
         return allDonations[currentDonor];
     }
 
-    function balanceOf(address donor) public view returns (uint256) {
-        return donations[donor];
+    function balanceOf() public view returns (uint) {
+        return donations;
     }
 }

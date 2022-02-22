@@ -14,6 +14,5 @@ task("getAllDonors", "Get all donors")
     const parsedAddress = JSON.parse(addressJson);
     const hardhatDonation = await ethers.getContractAt("Donation", parsedAddress.address);
 
-    const tx = await hardhatDonation.getAllDonors();
-    console.log({tx})
+    await hardhatDonation.getAllDonors();
   });

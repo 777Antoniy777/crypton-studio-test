@@ -8,10 +8,10 @@ async function main() {
   await donationContract.deployed();
   console.log("Contract address:", donationContract.address);
 
-  setContractAddress(donationContract);
+  saveContractAddress(donationContract);
 }
 
-function setContractAddress(contract) {
+function saveContractAddress(contract) {
   const fs = require("fs");
   const contractsDir = __dirname + "/../contracts";
 

@@ -17,15 +17,17 @@ task("sendDonation", "Transfer donation to any address")
     const parsedAddress = JSON.parse(addressJson);
     const hardhatDonation = await ethers.getContractAt("Donation", parsedAddress.address);
 
-    // для проверки отправки транзакции
-    const [sender] = await ethers.getSigners();
+    const sender = await ethers.getSigner();
 
-    const tx1 = await hardhatDonation.sendDonation(recipient, amount);
+    const tx1 = await hardhatDonation.sendDonation(
+      recipient,
+      ethers.utils.parseEther(amount),
+    );
     await tx1.wait();
 
     const tx2 = await sender.sendTransaction({
       to: recipient,
-      value: amount,
+      value: ethers.utils.parseEther(amount),
     });
     await tx2.wait();
   });
