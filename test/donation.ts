@@ -1,16 +1,19 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+import { ethers } from "hardhat";
+import { expect } from "chai";
+
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { Donation__factory, Donation } from "../typechain";
 
 describe("Donation contract", () => {
-  let Donation;
-  let hardhatDonation;
-  let owner;
-  let addr1;
-  let addr2;
-  let addrs;
+  let Donation: Donation__factory;
+  let hardhatDonation: Donation;
+  let owner: SignerWithAddress;
+  let addr1: SignerWithAddress;
+  let addr2: SignerWithAddress;
+  let addrs: SignerWithAddress[];
 
   beforeEach(async () => {
-    Donation = await ethers.getContractFactory("Donation");
+    Donation = (await ethers.getContractFactory("Donation")) as Donation__factory;
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
     hardhatDonation = await Donation.deploy();
@@ -23,7 +26,10 @@ describe("Donation contract", () => {
     });
   });
 
-  const insertDonationFromAnotherAddress = async (addr = addr1, receivedValue = 10) => {
+  const insertDonationFromAnotherAddress = async (
+    addr: SignerWithAddress = addr1,
+    receivedValue: number = 10
+  ): Promise<number> => {
     await hardhatDonation.connect(addr).insertDonation({ value: receivedValue });
 
     return receivedValue;
@@ -53,7 +59,7 @@ describe("Donation contract", () => {
   });
 
   describe("sendDonation", () => {
-    const checkTotalBalance = async (receivedValue) => {
+    const checkTotalBalance = async (receivedValue: number): Promise<void> => {
       const totalBalance = await hardhatDonation.balanceOf();
       expect(totalBalance).to.equal(receivedValue);
     };
@@ -79,9 +85,9 @@ describe("Donation contract", () => {
 
       // send donation from another address
       const sentValue = 5;
-      await expect(
-        hardhatDonation.connect(addr1).sendDonation(addr2.address, sentValue)
-      ).to.be.revertedWith("You are not owner");
+      await expect(hardhatDonation.connect(addr1).sendDonation(addr2.address, sentValue)).to.be.revertedWith(
+        "You are not owner"
+      );
 
       // check balances
       const totalBalance = await hardhatDonation.balanceOf();
@@ -95,9 +101,9 @@ describe("Donation contract", () => {
 
       // send donation from another address
       const sentValue = 15;
-      await expect(
-        hardhatDonation.sendDonation(addr2.address, sentValue)
-      ).to.be.revertedWith("Not enough amount of ether");
+      await expect(hardhatDonation.sendDonation(addr2.address, sentValue)).to.be.revertedWith(
+        "Not enough amount of ether"
+      );
 
       // check balances
       const totalBalance = await hardhatDonation.balanceOf();

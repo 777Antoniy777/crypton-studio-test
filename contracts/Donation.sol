@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 contract Donation {
     address public owner;
     address[] public donors;
-    uint public donations;
-    mapping(address => uint) public allDonations;
+    uint256 public donations;
+    mapping(address => uint256) public allDonations;
 
     constructor() {
         owner = msg.sender;
@@ -17,16 +17,12 @@ contract Donation {
     }
 
     // events
-    event ValueReceived(address from, uint amount);
-    event ValueSent(address from, address to, uint amount);
+    event ValueReceived(address from, uint256 amount);
+    event ValueSent(address from, address to, uint256 amount);
 
     receive() external payable {
         insertDonation();
     }
-
-//    fallback() external payable {
-//        insertDonation();
-//    }
 
     // В контракте имеется функция вноса любой суммы пожертвования в нативной валюте блокчейна
     function insertDonation() public payable {
@@ -42,7 +38,7 @@ contract Donation {
 
     // В контракте имеется функция вывода любой суммы на любой адрес,
     // при этом функция может быть вызвана только владельцем контракта
-    function sendDonation(address payable recipient, uint amount) external onlyOwner {
+    function sendDonation(address payable recipient, uint256 amount) external onlyOwner {
         require(donations >= amount, "Not enough amount of ether");
 
         donations = donations - amount;
@@ -59,11 +55,11 @@ contract Donation {
 
     // В контракте имеется view функция позволяющая получить общую сумму всех пожертвований
     // для определённого адреса
-    function getAllDonationsOfCurrentDonor(address currentDonor) public view returns (uint) {
+    function getAllDonationsOfCurrentDonor(address currentDonor) public view returns (uint256) {
         return allDonations[currentDonor];
     }
 
-    function balanceOf() public view returns (uint) {
+    function balanceOf() public view returns (uint256) {
         return donations;
     }
 }
